@@ -5,6 +5,12 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({
+      token: "4beffee90c014fafbf884148b7e98859"
+    });
+  </script>
   <title>Lab 9</title>
 
   <style>
@@ -88,6 +94,30 @@
   </main>
 
   <script>
+
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+      let string = msg.toLowerCase();
+      let substring = 'script error';
+      if (string.indexOf(substring) > -1) {
+        let output = 'Script Error: See Browser Console for Detail';
+        alert(output);
+        TrackJS.track(output);
+      } else {
+        let message = [
+          'Message: ' + msg,
+          'URL: ' + url,
+          'Line: ' + lineNo,
+          'Column: ' + columnNo,
+          'Error object: ' + JSON.stringify(error)
+        ].join(' - ');
+
+        alert(message);
+        TrackJS.track(message);
+      }
+      return false;
+    };
+
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -99,9 +129,148 @@
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    for (let elem of errorBtns) {
+      if (elem.innerHTML === 'Console Log') {
+        elem.addEventListener('click', () => {
+          let firstNum = document.querySelector('#first-num').value;
+          let secondNum = document.querySelector('#second-num').value;
+          let operator = document.querySelector('#operator').value;
+          console.log(`${firstNum} ${operator} ${secondNum}`);
+        })
+      }
+      else if (elem.innerHTML === 'Console Clear') {
+        elem.addEventListener('click', () => {
+          console.clear();
+        })
+      }
+      else if (elem.innerHTML === 'Console Error') {
+        elem.addEventListener('click', () => {
+          console.error("What?");
+        })
+      }
+      else if (elem.innerHTML === 'Console Count') {
+        elem.addEventListener('click', () => {
+          console.count('Calculation Count');
+        })
+      }
+      else if (elem.innerHTML === 'Console Dir') {
+        elem.addEventListener('click', () => {
+          console.dir(document.querySelector('#first-num'));
+          console.dir(document.querySelector('#second-num'));
+          console.dir(document.querySelector('#operator'));
+          console.dir(document.querySelector('output'));
+        })
+      }
+      else if (elem.innerHTML === 'Console dirxml') {
+        elem.addEventListener('click', () => {
+          console.dirxml(document);
+        })
+      }
+      else if (elem.innerHTML === 'Console Error') {
+        elem.addEventListener('click', () => {
+          console.error("What?");
+        })
+      }
+      else if (elem.innerHTML === 'Console Warn') {
+        elem.addEventListener('click', () => {
+          console.error("What?");
+        })
+      }
+      else if (elem.innerHTML === 'Console Group Start') {
+        elem.addEventListener('click', () => {
+          console.group('Group');
+          console.info('Me');
+          console.info('You')
+          console.info('That special feeling')
+        })
+      }
+      else if (elem.innerHTML === 'Console Group End') {
+        elem.addEventListener('click', () => {
+          console.groupEnd('Group');
+        })
+      }
+      else if (elem.innerHTML === 'Console Assert') {
+        elem.addEventListener('click', () => {
+          let firstNum = document.querySelector('#first-num').value;
+          let secondNum = document.querySelector('#second-num').value;
+          let operator = document.querySelector('#operator').value;
+          let result = eval(`${firstNum} ${operator} ${secondNum}`);
+          let test = -1
+          const reason = 'Forced a false here just so you can see this'
+          console.assert(test == result, { firstNum, secondNum, reason });
+        })
+      }
+      else if (elem.innerHTML === 'Console Table') {
+        elem.addEventListener('click', () => {
+          console.table([
+            {
+              first: 'René',
+              last: 'Magritte',
+              by_the_way: 'this is cool'
+            },
+            {
+              first: 'Chaim',
+              last: 'Soutine',
+              birthday: '18930113',
+            },
+            {
+              first: 'Henri',
+              last: 'Matisse',
+              birthday: 'year 1'
+            }
+          ]);
+        })
+      }
+      else if (elem.innerHTML === 'Start Timer') {
+        elem.addEventListener('click', () => {
+          console.log('Timer started.');
+          console.time();
+        })
+      }
+      else if (elem.innerHTML === 'End Timer') {
+        elem.addEventListener('click', () => {
+          console.timeEnd();
+        })
+      }
+      else if (elem.innerHTML === 'Console Trace') {
+        elem.addEventListener('click', () => {
+          const first = () => { second(); };
+          const second = () => { third(); };
+          const third = () => { fourth(); };
+          const fourth = () => { console.trace(); };
+          first();
+        })
+      }
+      else if (elem.innerHTML === 'Trigger a Global Error') {
+        elem.addEventListener('click', () => {
+          let globalError = new Error('Oh no');
+          throw globalError;
+        })
+      }
+    }
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+    document.querySelector('form').addEventListener('submit', e => {
+      try {
+        e.preventDefault();
+        let firstNum = document.querySelector('#frst-num').value;
+        if (firstNum > 5) {
+          console.log('Yeah, that\'s bigger than 5');
+        }
+      } catch (err) {
+        console.error(err)
+        console.log('we made it!')
+      } finally {
+        console.log('and here')
+      }
+      try {
+        if (!document.querySelector('#second-num').value) {
+          throw new SyntaxError("No num 2");
+        }
+      } catch (err) {
+        console.log(`Error: ${err.message}`);
+      }
+    });
+
   </script>
 </body>
 
